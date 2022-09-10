@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveData : MonoBehaviour
+public class SaveData
 {
     //[SerializeField] private Frame _Frame = new Frame();
 
@@ -16,15 +16,17 @@ public class SaveData : MonoBehaviour
 [System.Serializable]
 public class Frame
 {
-    public string impEvent;
-    public List<Obj> obj = new List<Obj>();
+    //public string impEvent;
+     public List<Obj> obj = new List<Obj>();
 }
 
 [System.Serializable]
 public class Obj
 {
-    public GameObject objID;
-    //somehow understand the gameobject name for human reading 
+    public Transform objID;
+    //somehow understand the gameobject name for human reading
+    public string objName;
     public Vector3 position;
     public Quaternion rotation;
+    
 }
