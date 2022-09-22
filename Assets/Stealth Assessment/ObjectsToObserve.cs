@@ -13,29 +13,36 @@ public class ObjectsToObserve : MonoBehaviour
     GameObject indivObject;
     private Vector3 position;
     private Quaternion rotation;
-    public LinkedList<Node> myNodes = new LinkedList<Node>();
-    public Node newNode;
-    public LinkedListNode<Node> replayNode;
-    public Vector3 currentPos;
+    private LinkedList<Node> myNodes = new LinkedList<Node>();
+    private Node newNode;
+    private LinkedListNode<Node> replayNode;
+    private Vector3 currentPos;
     bool ifReplay;
     bool ifImport;
     bool triggered;
-    //int counter = 0;
-    public Frame frame;
-    public string frameStr;
-    public Obj objData;
-    public string replayFrame;
+
+    private Frame frame;
+    private string frameStr;
+    private Obj objData;
+    private string replayFrame;
+
+    [Tooltip("Specify the name of the tag of objects to record. Ensure that all objects you want to record has this tag.")]
+    public string tagToObserve;
 
     // DATA SAVING TO JSON FILE
-    public string directName;
-    public string fileName ;
-    //StreamWriter file = new StreamWriter(fileName, true);
+    private string directName;
+    private string fileName ;
+    [Tooltip("Name of folder to store data collected. Preferably a new and empty folder.")]
+    public string enterFolderName;
+
+
     int counter;
     int counter2;
-    public List<Obj> savedObjList; 
+    private List<Obj> savedObjList; 
+
     // RETRIEVING DATA FROM JSON FILE
-    public string importDirectory;
-    public string importFile;
+    private string importDirectory;
+    private string importFile;
     int importCounter;
     private string importStr;
     private Frame importFrame;
@@ -47,15 +54,11 @@ public class ObjectsToObserve : MonoBehaviour
         ifReplay = false;
         ifImport = false;
         triggered = false;
-        directName = Directory.GetCurrentDirectory() + "/DataTrial4";
-        importDirectory = Directory.GetCurrentDirectory() + "/DataTrial4";
+        directName = Directory.GetCurrentDirectory() + "/"+ enterFolderName;
+        importDirectory = Directory.GetCurrentDirectory() + "/" + enterFolderName;
         counter2 = 0;
-        //fileName = directName + "/JSONtest1.json";
-        //GameObject[] objectsArr = UnityEngine.Object.FindObjectsOfType<GameObject>();
 
-        //To check if the problem is due to too may gameobjects, i tried only recording 2 objects (with tag "TANKS")
-        //To try, just uncomment the next line and comment the first line.
-        GameObject[] objectsArr = GameObject.FindGameObjectsWithTag("TANKS");
+        GameObject[] objectsArr = GameObject.FindGameObjectsWithTag(tagToObserve);
 
         foreach (GameObject go in objectsArr) // To convert the GameObject Array into a GameObject List 
         {
@@ -70,7 +73,7 @@ public class ObjectsToObserve : MonoBehaviour
         
         Debug.Log("COUNT: " + savedObjList.Count);
 
-        // CHECK CSV FILE / CREATE CSV FILE
+        
         if (Directory.Exists(directName))
         {
             Debug.Log("File Exists");
@@ -96,19 +99,14 @@ public class ObjectsToObserve : MonoBehaviour
         {
             foreach (GameObject o in objects)
             {
-                //Leave node option so that user can choose to not save data, maybe only within the game? 
-                //position = obj.transform.position;
-                //rotation = obj.transform.rotation; 
-                //newNode = new Node(position, rotation, obj, 0);
-                //myNodes.AddLast(newNode);
-
+                
                 //Add Obj data
                 objData.objID = o.transform;
                 objData.objName = o.name;
                 objData.position = o.transform.position;
                 objData.rotation = o.transform.rotation;
 
-                
+
                 //Add Obj data to list 
                 frame.obj.Add(objData);
                 counter2++;
@@ -119,9 +117,9 @@ public class ObjectsToObserve : MonoBehaviour
             //Save the frame data into JSON
             counter2 = 0;
             fileName = directName + "/JSONtest" + counter.ToString() + ".json";
-            frameStr = JsonUtility.ToJson(frame); //trouble converting lists
+            frameStr = JsonUtility.ToJson(frame); 
             Debug.Log("The STRING: " + frameStr);
-            File.AppendAllText(fileName, frameStr); //maybe async? //check if the frames are very different
+            File.AppendAllText(fileName, frameStr); 
             counter++;
         }
         else if (ifReplay)
@@ -152,11 +150,8 @@ public class ObjectsToObserve : MonoBehaviour
         }
         if (ifImport)
         {
-            // Add the scripts to start download here
-            //triggered?
             if (triggered)
             {
-                //Check if the directory exists
                 if (Directory.Exists(importDirectory))
                 {
                     Debug.Log("IMPORT: File Exists");
@@ -171,7 +166,7 @@ public class ObjectsToObserve : MonoBehaviour
             }
             importFile = importDirectory + "/JSONtest" + importCounter.ToString() + ".json";
             Debug.Log("File being read: " + importFile);
-            //later change "/JSONtest" to input from user
+
             importStr = File.ReadAllText(importFile);
             importFrame = JsonUtility.FromJson<Frame>(importStr);
 
