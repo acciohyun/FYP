@@ -22,8 +22,7 @@ public class ToggleScript : MonoBehaviour
 
     void ChangeToggle(Toggle toggle)
     {
-        saver.startReplay(toggle.isOn);
-        saver.stopReplay(toggle.isOn);
+        saver.recordStatus(toggle.isOn);
     }
 }
 

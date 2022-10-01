@@ -11,15 +11,8 @@ public class ObjectsToObserve : MonoBehaviour
     public List<GameObject> objects;
     GameObject[] objectsArr;
     GameObject indivObject;
-    private Vector3 position;
-    private Quaternion rotation;
-    private LinkedList<Node> myNodes = new LinkedList<Node>();
-    private Node newNode;
-    private LinkedListNode<Node> replayNode;
-    private Vector3 currentPos;
-    bool ifReplay;
     bool ifImport;
-    bool triggered;
+    bool recording;
 
     private Frame frame;
     private string frameStr;
@@ -27,7 +20,9 @@ public class ObjectsToObserve : MonoBehaviour
     private string replayFrame;
 
     [Tooltip("Specify the name of the tag of objects to record. Ensure that all objects you want to record has this tag.")]
-    public string tagToObserve;
+    public List<string> tags; 
+
+    //public string tagToObserve;
 
     // DATA SAVING TO JSON FILE
     private string directName;
@@ -37,7 +32,6 @@ public class ObjectsToObserve : MonoBehaviour
 
 
     int counter;
-    int counter2;
     private List<Obj> savedObjList; 
 
     // RETRIEVING DATA FROM JSON FILE
@@ -51,27 +45,27 @@ public class ObjectsToObserve : MonoBehaviour
     {
         objData =  new Obj();
         objects = new List<GameObject>();
-        ifReplay = false;
         ifImport = false;
-        triggered = false;
+        recording = false;
         directName = Directory.GetCurrentDirectory() + "/"+ enterFolderName;
         importDirectory = Directory.GetCurrentDirectory() + "/" + enterFolderName;
-        counter2 = 0;
 
-        GameObject[] objectsArr = GameObject.FindGameObjectsWithTag(tagToObserve);
-
-        foreach (GameObject go in objectsArr) // To convert the GameObject Array into a GameObject List 
+        foreach (string myTag in tags)
         {
-            if (go.isStatic == false)
+            GameObject[] objectsArr = GameObject.FindGameObjectsWithTag(myTag);
+            foreach (GameObject go in objectsArr) // To convert the GameObject Array into a GameObject List 
             {
-                objects.Add(go);
-                
+                if (go.isStatic == false)
+                {
+                    objects.Add(go);
+
+                }
             }
         }
         savedObjList = new List<Obj>(new Obj [objects.Count]);
 
-        
-        Debug.Log("COUNT: " + savedObjList.Count);
+        Debug.Log("TRACKING: " + savedObjList.Count ); 
+        //Debug.Log("COUNT: " + savedObjList.Count);
 
         
         if (Directory.Exists(directName))
@@ -95,11 +89,10 @@ public class ObjectsToObserve : MonoBehaviour
         frame = new Frame();
         
         // COLLECTION OF DATA
-        if (!ifReplay && !ifImport)
+        if (!ifImport&&recording)
         {
             foreach (GameObject o in objects)
             {
-                
                 //Add Obj data
                 objData.objID = o.transform;
                 objData.objName = o.name;
@@ -109,61 +102,19 @@ public class ObjectsToObserve : MonoBehaviour
 
                 //Add Obj data to list 
                 frame.obj.Add(objData);
-                counter2++;
 
                 //Required as Class Obj is called by Reference
                 objData = new Obj();
             }
             //Save the frame data into JSON
-            counter2 = 0;
             fileName = directName + "/JSONtest" + counter.ToString() + ".json";
             frameStr = JsonUtility.ToJson(frame); 
             Debug.Log("The STRING: " + frameStr);
             File.AppendAllText(fileName, frameStr); 
             counter++;
         }
-        else if (ifReplay)
+        if (ifImport&& !recording)
         {
-            if (triggered)
-            {
-                replayNode = myNodes.First;
-                triggered = false;
-                currentPos = new Vector3(0, 0, 0);
-            }
-            replayNode.Value.objName.transform.position = replayNode.Value.position;
-            replayNode.Value.objName.transform.rotation = replayNode.Value.rotation;
-
-            Debug.Log("Position: " + replayNode.Value.position + " Quat: " + replayNode.Value.rotation);
-            Debug.Log("objName" + replayNode.Value.objName);
-
-            if (replayNode == myNodes.Last)
-            {
-                Debug.Log("End of LL");
-                replayFrame = File.ReadAllText(fileName);
-                Debug.Log(replayFrame);
-
-            }
-            else
-            {
-                replayNode = replayNode.Next;
-            }
-        }
-        if (ifImport)
-        {
-            if (triggered)
-            {
-                if (Directory.Exists(importDirectory))
-                {
-                    Debug.Log("IMPORT: File Exists");
-                }
-                else
-                {
-                    Debug.Log("IMPORT: File does not exist");
-                    ifImport = false;
-                }
-                triggered = false;
-
-            }
             importFile = importDirectory + "/JSONtest" + importCounter.ToString() + ".json";
             Debug.Log("File being read: " + importFile);
 
@@ -178,46 +129,21 @@ public class ObjectsToObserve : MonoBehaviour
                 Debug.Log("Current Rot: " + obj.objID.transform.rotation);
             }
             importCounter++;
-            if (Directory.Exists(importDirectory + "/JSONtest" + importCounter.ToString() + ".json"))
-            {
-
-            }
         }
 
 
     }
-    public void startReplay(bool a)
+
+    //The following function toggles the start of record and end of record
+    public void recordStatus(bool a)
     {
-        if (a)
-        {
-            triggered = true;
-            ifReplay = true;
-        }
-        
-    }
-    public void stopReplay(bool a)
-    {
-        if (!a)
-        {
-            ifReplay = false;
-        }
+        recording = a;
     }
 
-    public void startImport(bool a)
-    {
-        if (a)
-        {
-            ifImport = true;
-            Debug.Log("Import start");
-        }
 
-    }
-    public void stopImport(bool a)
+    // The following function toggles the start of the import
+    public void importStatus(bool a)
     {
-        if (!a)
-        {
-            ifImport = false;
-            Debug.Log("Import stop");
-        }
+        ifImport = a;
     }
 }

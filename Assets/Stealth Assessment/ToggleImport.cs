@@ -22,7 +22,6 @@ public class ToggleImport : MonoBehaviour
 
     void ChangeToggle(Toggle toggle)
     {
-        saver.startImport(toggle.isOn);
-        saver.stopImport(toggle.isOn);
+        saver.importStatus(toggle.isOn);
     }
 }
