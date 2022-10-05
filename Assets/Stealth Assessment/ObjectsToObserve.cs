@@ -107,7 +107,7 @@ public class ObjectsToObserve : MonoBehaviour
                 objData = new Obj();
             }
             //Save the frame data into JSON
-            fileName = directName + "/JSONtest" + counter.ToString() + ".json";
+            fileName = directName + "/JSONtest" + counter.ToString("00000000") + ".json";
             frameStr = JsonUtility.ToJson(frame); 
             Debug.Log("The STRING: " + frameStr);
             File.AppendAllText(fileName, frameStr); 
@@ -115,7 +115,7 @@ public class ObjectsToObserve : MonoBehaviour
         }
         if (ifImport&& !recording)
         {
-            importFile = importDirectory + "/JSONtest" + importCounter.ToString() + ".json";
+            importFile = importDirectory + "/JSONtest" + importCounter.ToString("00000000") + ".json";
             Debug.Log("File being read: " + importFile);
 
             importStr = File.ReadAllText(importFile);
