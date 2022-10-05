@@ -108,9 +108,11 @@ public class ObjectsToObserve : MonoBehaviour
             }
             //Save the frame data into JSON
             fileName = directName + "/JSONtest" + recordCounter.ToString("00000000") + ".json";
-            frameStr = JsonUtility.ToJson(frame); 
+            frameStr = JsonUtility.ToJson(frame);
             Debug.Log("The STRING: " + frameStr);
-            File.AppendAllText(fileName, frameStr); 
+            File.AppendAllText(fileName, frameStr);
+            File.WriteAllText(fileName, frameStr);
+
             recordCounter++;
         }
         if (ifImport&& !recording)
@@ -161,9 +163,14 @@ public class ObjectsToObserve : MonoBehaviour
     }
 
     // The following function toggles the start of the import
-    //public void rebeginRecordStatus(bool a)
-    //{
-    //    recording = a;
-    //    recordCounter
-    //}
+    public void rebeginRecordStatus(bool a)
+    {
+        recording = a;
+        if (a)
+        {
+            recordCounter = 0;
+            importCounter = 0;
+        }
+        
+    }
 }
