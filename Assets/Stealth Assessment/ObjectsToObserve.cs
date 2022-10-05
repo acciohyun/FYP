@@ -31,7 +31,7 @@ public class ObjectsToObserve : MonoBehaviour
     public string enterFolderName;
 
 
-    int counter;
+    int recordCounter;
     private List<Obj> savedObjList; 
 
     // RETRIEVING DATA FROM JSON FILE
@@ -79,7 +79,7 @@ public class ObjectsToObserve : MonoBehaviour
             Directory.CreateDirectory(directName);
 
         }
-        counter = 0;
+        recordCounter = 0;
         importCounter = 0;
     }
 
@@ -107,34 +107,47 @@ public class ObjectsToObserve : MonoBehaviour
                 objData = new Obj();
             }
             //Save the frame data into JSON
-            fileName = directName + "/JSONtest" + counter.ToString("00000000") + ".json";
+            fileName = directName + "/JSONtest" + recordCounter.ToString("00000000") + ".json";
             frameStr = JsonUtility.ToJson(frame); 
             Debug.Log("The STRING: " + frameStr);
             File.AppendAllText(fileName, frameStr); 
-            counter++;
+            recordCounter++;
         }
         if (ifImport&& !recording)
         {
             importFile = importDirectory + "/JSONtest" + importCounter.ToString("00000000") + ".json";
             Debug.Log("File being read: " + importFile);
 
-            importStr = File.ReadAllText(importFile);
-            importFrame = JsonUtility.FromJson<Frame>(importStr);
 
-            foreach (Obj obj in importFrame.obj)
+            if (importCounter != recordCounter)
             {
-                obj.objID.transform.position = obj.position;
-                Debug.Log("Current Pos: " + obj.objID.transform.position);
-                obj.objID.transform.rotation = obj.rotation;
-                Debug.Log("Current Rot: " + obj.objID.transform.rotation);
+                Debug.Log("File Exists");
+                importStr = File.ReadAllText(importFile);
+                importFrame = JsonUtility.FromJson<Frame>(importStr);
+
+                foreach (Obj obj in importFrame.obj)
+                {
+                    obj.objID.transform.position = obj.position;
+                    Debug.Log("Current Pos: " + obj.objID.transform.position);
+                    obj.objID.transform.rotation = obj.rotation;
+                    Debug.Log("Current Rot: " + obj.objID.transform.rotation);
+                }
+                importCounter++;
+
             }
-            importCounter++;
+            else
+            {
+                importCounter = 0;
+                ifImport = false;
+
+            }
+
         }
 
 
     }
 
-    //The following function toggles the start of record and end of record
+    //The following function toggles the start of record and stop of record
     public void recordStatus(bool a)
     {
         recording = a;
@@ -146,4 +159,11 @@ public class ObjectsToObserve : MonoBehaviour
     {
         ifImport = a;
     }
+
+    // The following function toggles the start of the import
+    //public void rebeginRecordStatus(bool a)
+    //{
+    //    recording = a;
+    //    recordCounter
+    //}
 }
