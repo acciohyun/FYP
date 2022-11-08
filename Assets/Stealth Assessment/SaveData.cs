@@ -28,5 +28,6 @@ public class Obj
     public string objName;
     public Vector3 position;
     public Quaternion rotation;
+    public bool activeStatus;
     
 }

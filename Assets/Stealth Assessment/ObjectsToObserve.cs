@@ -19,8 +19,13 @@ public class ObjectsToObserve : MonoBehaviour
     private Obj objData;
     private string replayFrame;
 
+
     [Tooltip("Specify the name of the tag of objects to record. Ensure that all objects you want to record has this tag.")]
-    public List<string> tags; 
+    public List<string> tags;
+
+    [Tooltip("Specify the keyword of objects to record. Note that ALL objects with theis keyword will be recored.")]
+    public List<string> keywords;
+
 
     //public string tagToObserve;
 
@@ -50,6 +55,8 @@ public class ObjectsToObserve : MonoBehaviour
         directName = Directory.GetCurrentDirectory() + "/"+ enterFolderName;
         importDirectory = Directory.GetCurrentDirectory() + "/" + enterFolderName;
 
+
+        
         foreach (string myTag in tags)
         {
             GameObject[] objectsArr = GameObject.FindGameObjectsWithTag(myTag);
@@ -62,10 +69,12 @@ public class ObjectsToObserve : MonoBehaviour
                 }
             }
         }
+
+
+
         savedObjList = new List<Obj>(new Obj [objects.Count]);
 
-        Debug.Log("TRACKING: " + savedObjList.Count ); 
-        //Debug.Log("COUNT: " + savedObjList.Count);
+      
 
         
         if (Directory.Exists(directName))
@@ -94,11 +103,11 @@ public class ObjectsToObserve : MonoBehaviour
             foreach (GameObject o in objects)
             {
                 //Add Obj data
-                objData.objID = o.transform;
+                objData.objID = o.transform; 
                 objData.objName = o.name;
                 objData.position = o.transform.position;
                 objData.rotation = o.transform.rotation;
-
+                objData.activeStatus = o.activeSelf; //Save State of gameObject
 
                 //Add Obj data to list 
                 frame.obj.Add(objData);
@@ -129,10 +138,10 @@ public class ObjectsToObserve : MonoBehaviour
 
                 foreach (Obj obj in importFrame.obj)
                 {
+                    obj.objID.transform.gameObject.SetActive(obj.activeStatus); //Set State of gameObject
+                    Debug.Log("SAVED ACTIVE: " + obj.activeStatus);
                     obj.objID.transform.position = obj.position;
-                    Debug.Log("Current Pos: " + obj.objID.transform.position);
                     obj.objID.transform.rotation = obj.rotation;
-                    Debug.Log("Current Rot: " + obj.objID.transform.rotation);
                 }
                 importCounter++;
 
