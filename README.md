@@ -12,7 +12,7 @@ After identifying that storing data efficiently (in terms of storage space and t
 3. SaveData - This script contains the data structure of the JSON structure of the data collected
 
 ### Steps to Start Tracking Data
-1. Download the 3 scripts mentioned in the previous section 
+1. Download the 3 scripts mentioned in the previous section (Assets > Stealth Assessment)
 2. Add ObjectsToObserve Script as a GameObject into game environment
 3. In Inspecter under ObjectsToObserve, populate the field "Tag To Observe" with the tag of objects that you want to record
 4. In Inspecter under ObjectsToObserve, populate the field "Enter Folder Name" with the new folder name where the data collected will be exported to
